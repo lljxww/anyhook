@@ -3,6 +3,10 @@ name = "anyhook-cli"
 version = "0.0.1"
 edition = "2024"
 
+[[bin]]
+name = "anyhook"
+path = "src/main.rs"
+
 [dependencies]
 anyhook-core = { path = "../anyhook-core" }
 anyhook-engine = { path = "../anyhook-engine" }

@@ -167,6 +167,7 @@ hooks:
             let dashboard_state = std::sync::Arc::new(DashboardState {
                 config: shared_config.clone(),
                 pool: db_pool,
+                event_sender: engine.get_event_sender(),
             });
 
             tokio::spawn(async move {

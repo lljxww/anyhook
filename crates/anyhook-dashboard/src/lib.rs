@@ -25,6 +25,7 @@ struct Assets;
 pub struct DashboardState {
     pub config: Arc<RwLock<AnyhookConfig>>,
     pub pool: SqlitePool,
+    pub event_sender: tokio::sync::mpsc::Sender<anyhook_core::event::Event>,
 }
 
 /// 启动 Axum Web 框架服务器
@@ -33,6 +34,7 @@ pub async fn start_dashboard(port: u16, state: Arc<DashboardState>) -> anyhow::R
     let app = Router::new()
         .route("/api/status", get(api_status))
         .route("/api/logs", get(api_logs).delete(api_clear_logs))
+        .route("/api/trigger", axum::routing::post(api_trigger))
         .fallback(static_handler) // 如果找不到路由，就返回静态文件 (SPA 逻辑)
         .with_state(state);
 
@@ -146,5 +148,29 @@ async fn api_clear_logs(State(state): State<Arc<DashboardState>>) -> Result<Stat
             StatusCode::INTERNAL_SERVER_ERROR
         })?;
 
+    Ok(StatusCode::OK)
+}
+
+#[derive(serde::Deserialize)]
+struct TriggerPayload {
+    watcher: String,
+    payload: Option<serde_json::Value>,
+}
+
+async fn api_trigger(
+    State(state): State<Arc<DashboardState>>,
+    Json(body): Json<TriggerPayload>,
+) -> Result<StatusCode, StatusCode> {
+    let event = anyhook_core::event::Event::new(
+        format!("watcher.{}", body.watcher),
+        "api.trigger",
+        body.payload.unwrap_or_else(|| serde_json::json!({}))
+    );
+
+    if let Err(e) = state.event_sender.send(event).await {
+        tracing::error!("Failed to send api event: {}", e);
+        return Err(StatusCode::INTERNAL_SERVER_ERROR);
+    }
+    
     Ok(StatusCode::OK)
 }

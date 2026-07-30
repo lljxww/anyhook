@@ -21,6 +21,7 @@
                 "-c",
                 "anyhook.yaml"
             ],
+            "program": "${workspaceFolder}/target/debug/anyhook",
             "cwd": "${workspaceFolder}",
             "env": {
                 "RUST_BACKTRACE": "1"
@@ -47,6 +48,7 @@
                 "-c",
                 "anyhook.yaml"
             ],
+            "program": "${workspaceFolder}/target/debug/anyhook",
             "cwd": "${workspaceFolder}",
             "env": {
                 "RUST_BACKTRACE": "1"
@@ -70,6 +72,7 @@
                 }
             },
             "args": [],
+            "program": "${workspaceFolder}/target/wasm32-wasip1/debug/hello_wasm.wasm",
             "cwd": "${workspaceFolder}/hello_wasm",
             "env": {
                 "ANYHOOK_CONTEXT": "{\"event\": {\"source\": \"test_debugger\"}}",

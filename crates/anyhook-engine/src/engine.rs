@@ -28,11 +28,14 @@ pub struct Engine {
     router: Arc<Router>, // 路由表
     reload_rx: Option<mpsc::Receiver<AnyhookConfig>>, // 用于接收热重载信号的通道
     pub db_url: String, // 数据库连接字符串
+    event_tx: mpsc::Sender<Event>, // 内部事件发送器
+    event_rx: Option<mpsc::Receiver<Event>>, // 内部事件接收器
 }
 
 impl Engine {
     pub fn new(config: AnyhookConfig, db_url: String) -> Self {
         let router = Arc::new(Router::new(config.hooks.clone()));
+        let (event_tx, event_rx) = mpsc::channel(1024);
         Self {
             _config: config,
             watchers: HashMap::new(),
@@ -40,7 +43,13 @@ impl Engine {
             router,
             reload_rx: None,
             db_url,
+            event_tx,
+            event_rx: Some(event_rx),
         }
+    }
+
+    pub fn get_event_sender(&self) -> mpsc::Sender<Event> {
+        self.event_tx.clone()
     }
 
     pub fn set_reload_receiver(&mut self, rx: mpsc::Receiver<AnyhookConfig>) {
@@ -55,10 +64,11 @@ impl Engine {
         self.actions.insert(action_type, action);
     }
 
-    pub async fn start(self) -> Result<()> {
+    pub async fn start(mut self) -> Result<()> {
         let db = Arc::new(Database::new(&self.db_url).await?);
         let executor = Arc::new(Executor::new(10, db.clone()));
-        let (tx, mut rx) = mpsc::channel::<Event>(1024);
+        let mut rx = self.event_rx.take().expect("Engine started without event_rx!");
+        let tx = self.event_tx.clone();
 
         for (name, watcher) in &self.watchers {
             info!("Starting watcher: {}", name);

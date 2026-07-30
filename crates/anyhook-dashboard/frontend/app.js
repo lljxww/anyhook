@@ -58,9 +58,12 @@ async function fetchStatus() {
             data.watchers.forEach(w => {
                 const li = document.createElement('li');
                 li.innerHTML = `
-                    <div class="item-title">
-                        <span>${w.name}</span>
-                        <span class="tag">${w.type}</span>
+                    <div class="item-title" style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                        <div>
+                            <span>${w.name}</span>
+                            <span class="tag">${w.type}</span>
+                        </div>
+                        <button class="primary-btn" style="padding: 4px 12px; font-size: 0.8rem;" onclick="triggerWatcher('${w.name}')">▶ Trigger</button>
                     </div>
                 `;
                 watchersList.appendChild(li);
@@ -157,5 +160,25 @@ window.clearLogs = async () => {
     } catch (error) {
         console.error('Error clearing logs:', error);
         alert('Error clearing logs');
+    }
+};
+
+window.triggerWatcher = async (watcherName) => {
+    try {
+        const response = await fetch('/api/trigger', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ watcher: watcherName, payload: { source: 'dashboard' } })
+        });
+        
+        if (response.ok) {
+            alert(`Trigger signal sent to watcher: ${watcherName}! Check the Action Logs.`);
+        } else {
+            console.error('Failed to trigger');
+            alert('Failed to trigger watcher');
+        }
+    } catch (error) {
+        console.error('Error triggering watcher:', error);
+        alert('Error triggering watcher');
     }
 };
