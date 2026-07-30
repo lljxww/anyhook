@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anyhook Dashboard</title>
+    <meta name="description" content="Dashboard for Anyhook Event Engine">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="background-effect"></div>
+    
+    <div class="app-container">
+        <header class="glass-panel main-header">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <h1>Anyhook</h1>
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active" id="nav-dashboard">Dashboard</a>
+                <a href="#" id="nav-logs">Action Logs</a>
+            </nav>
+            <div class="status-indicator">
+                <span class="pulse"></span>
+                <span class="status-text">Engine Online</span>
+            </div>
+        </header>
+
+        <main class="content-area">
+            <!-- Dashboard View -->
+            <section id="view-dashboard" class="view active">
+                <div class="metrics-grid">
+                    <div class="glass-panel metric-card">
+                        <h3>Active Watchers</h3>
+                        <p class="metric-value" id="count-watchers">0</p>
+                    </div>
+                    <div class="glass-panel metric-card">
+                        <h3>Registered Actions</h3>
+                        <p class="metric-value" id="count-actions">0</p>
+                    </div>
+                    <div class="glass-panel metric-card">
+                        <h3>Configured Hooks</h3>
+                        <p class="metric-value" id="count-hooks">0</p>
+                    </div>
+                </div>
+
+                <div class="split-view">
+                    <div class="glass-panel list-container">
+                        <div class="panel-header">
+                            <h2>Watchers</h2>
+                            <button class="icon-btn" onclick="fetchStatus()">↺</button>
+                        </div>
+                        <ul class="item-list" id="watchers-list">
+                            <li class="loading-state">Loading watchers...</li>
+                        </ul>
+                    </div>
+                    <div class="glass-panel list-container">
+                        <div class="panel-header">
+                            <h2>Hooks & Actions</h2>
+                        </div>
+                        <ul class="item-list" id="hooks-list">
+                            <li class="loading-state">Loading hooks...</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logs View -->
+            <section id="view-logs" class="view">
+                <div class="glass-panel list-container full-height">
+                    <div class="panel-header">
+                        <h2>Action Execution Logs</h2>
+                        <div class="header-actions">
+                            <button class="danger-btn" onclick="clearLogs()" style="margin-right: 10px;">Clear Logs</button>
+                            <button class="primary-btn" onclick="fetchLogs()">Refresh</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Time</th>
+                                    <th>Action</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-tbody">
+                                <tr><td colspan="4" class="loading-state">Loading logs...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+watchers:
+  - name: "test_cron"
+    type: "timer"
+    config:
+      cron: "0/2 * * * * * *" # Every 2 seconds
+
+  - name: "manual_watcher"
+    type: "manual"
+    config: {}
+
+hooks:
+  - watcher: "test_cron"
+    actions:
+      - type: "shell"
+        name: "test_shell"
+        config:
+          command: "echo 'Timer triggered!'"
+
+      - type: "hello_wasm"
+        name: "test_wasm"
+        config: {}
+
+  - watcher: "manual_watcher"
+    actions:
+      - type: "shell"
+        name: "test_manual"
+        config:
+          command: "echo 'Manual trigger worked!'"

@@ -1,0 +1,81 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug Anyhook (Start Engine)",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=anyhook-cli",
+                    "--package=anyhook-cli"
+                ],
+                "filter": {
+                    "name": "anyhook-cli",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "start",
+                "-c",
+                "anyhook.yaml"
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "RUST_BACKTRACE": "1"
+            },
+            "sourceLanguages": ["rust"]
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug Anyhook (List Configs)",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=anyhook-cli",
+                    "--package=anyhook-cli"
+                ],
+                "filter": {
+                    "name": "anyhook-cli",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "list",
+                "-c",
+                "anyhook.yaml"
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "RUST_BACKTRACE": "1"
+            },
+            "sourceLanguages": ["rust"]
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug Hello WASM (Plugin)",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=hello_wasm",
+                    "--package=hello_wasm",
+                    "--target=wasm32-wasip1"
+                ],
+                "filter": {
+                    "name": "hello_wasm",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}/hello_wasm",
+            "env": {
+                "ANYHOOK_CONTEXT": "{\"event\": {\"source\": \"test_debugger\"}}",
+                "ANYHOOK_OUTPUT_FILE": "${workspaceFolder}/hello_wasm/out.json"
+            },
+            "sourceLanguages": ["rust"]
+        }
+    ]
+}

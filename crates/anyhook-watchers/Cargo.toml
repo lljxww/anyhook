@@ -1,0 +1,16 @@
+[package]
+name = "anyhook-watchers"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhook-core = { path = "../anyhook-core" }
+tokio = { workspace = true }
+notify = { workspace = true }
+tracing = { workspace = true }
+serde_json = { workspace = true }
+serde = { workspace = true }
+async-trait = { workspace = true }
+cron = "0.12"
+chrono = { workspace = true }
+axum = { workspace = true }

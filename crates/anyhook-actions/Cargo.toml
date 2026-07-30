@@ -1,0 +1,19 @@
+[package]
+name = "anyhook-actions"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhook-core = { path = "../anyhook-core" }
+tokio = { workspace = true }
+tar = { workspace = true }
+flate2 = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+reqwest = { workspace = true }
+wasmtime = "18.0.0"
+wasmtime-wasi = "18.0.0"
+uuid = { workspace = true, features = ["v4"] }
+cap-std = "2.0.2"

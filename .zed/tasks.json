@@ -1,0 +1,30 @@
+[
+  {
+    "label": "cargo run engine",
+    "command": "cargo",
+    "args": ["run", "-p", "anyhook-cli", "--", "start", "-c", "anyhook.yaml"],
+    "env": {
+      "RUST_LOG": "info,anyhook=debug"
+    },
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "cargo build all",
+    "command": "cargo",
+    "args": ["build", "--workspace", "--all-targets"],
+    "use_new_terminal": false
+  },
+  {
+    "label": "cargo build wasm plugin",
+    "command": "cargo",
+    "args": ["build", "-p", "hello_wasm", "--target", "wasm32-wasip1"],
+    "use_new_terminal": false
+  },
+  {
+    "label": "cargo test",
+    "command": "cargo",
+    "args": ["test", "--workspace"],
+    "use_new_terminal": false
+  }
+]
