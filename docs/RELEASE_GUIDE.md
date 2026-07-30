@@ -12,8 +12,8 @@
 2. **提交代码并打标签 (Tag)**:
    ```bash
    git add .
-   git commit -m "chore: release v1.0.0"
-   git tag v1.0.0
+   git commit -m "chore: release v0.0.1"
+   git tag v0.0.1
    git push origin main --tags
    ```
 3. **等待云端构建**:

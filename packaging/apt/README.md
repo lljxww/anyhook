@@ -35,7 +35,7 @@ sudo apt-get install anyhook
 1. 在一台 Linux 服务器上安装 `aptly` (APT Repository Management tool)
 2. 将 GitHub Actions 产出的 `.deb` 包推送到该服务器，并使用 aptly 导入：
    ```bash
-   aptly repo add anyhook-repo ./anyhook_1.0.0_amd64.deb
+   aptly repo add anyhook-repo ./anyhook_0.0.1_amd64.deb
    aptly publish repo anyhook-repo
    ```
 3. 通过 Nginx 将 `~/.aptly/public` 目录暴露为静态 HTTP 站点。
