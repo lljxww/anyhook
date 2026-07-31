@@ -8,6 +8,12 @@ watchers:
     type: "manual"
     config: {}
 
+  - name: "folder_monitor"
+    type: "filesystem"
+    config:
+      path: "./monitor_me"
+      recursive: true
+
 hooks:
   - watcher: "test_cron"
     actions:
@@ -26,3 +32,16 @@ hooks:
         name: "test_manual"
         config:
           command: "echo 'Manual trigger worked!'"
+
+  - watcher: "folder_monitor"
+    actions:
+      - type: "delay"
+        name: "debounce_wait"
+        config:
+          milliseconds: 1000
+
+      - type: "shell"
+        name: "auto_zip"
+        config:
+          # 使用 zip 压缩整个文件夹。-r 表示递归，-FS 表示同步(替换已有的同名zip包)
+          command: "cd ./monitor_me && zip -r -FS ../monitor_me_backup.zip ."

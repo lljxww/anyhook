@@ -8,11 +8,10 @@
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=anyhook-cli",
                     "--package=anyhook-cli"
                 ],
                 "filter": {
-                    "name": "anyhook-cli",
+                    "name": "anyhook",
                     "kind": "bin"
                 }
             },
@@ -21,7 +20,6 @@
                 "-c",
                 "anyhook.yaml"
             ],
-            "program": "${workspaceFolder}/target/debug/anyhook",
             "cwd": "${workspaceFolder}",
             "env": {
                 "RUST_BACKTRACE": "1"
@@ -35,11 +33,10 @@
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=anyhook-cli",
                     "--package=anyhook-cli"
                 ],
                 "filter": {
-                    "name": "anyhook-cli",
+                    "name": "anyhook",
                     "kind": "bin"
                 }
             },
@@ -48,7 +45,6 @@
                 "-c",
                 "anyhook.yaml"
             ],
-            "program": "${workspaceFolder}/target/debug/anyhook",
             "cwd": "${workspaceFolder}",
             "env": {
                 "RUST_BACKTRACE": "1"
@@ -62,7 +58,6 @@
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=hello_wasm",
                     "--package=hello_wasm",
                     "--target=wasm32-wasip1"
                 ],
@@ -72,7 +67,6 @@
                 }
             },
             "args": [],
-            "program": "${workspaceFolder}/target/wasm32-wasip1/debug/hello_wasm.wasm",
             "cwd": "${workspaceFolder}/hello_wasm",
             "env": {
                 "ANYHOOK_CONTEXT": "{\"event\": {\"source\": \"test_debugger\"}}",

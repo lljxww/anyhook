@@ -15,6 +15,12 @@ use anyhook_actions::shell::ShellAction;
 use anyhook_actions::extract::ExtractAction;
 use anyhook_actions::http::HttpAction;
 use anyhook_actions::wasm::WasmAction;
+use anyhook_actions::delay::DelayAction;
+use anyhook_actions::write_file::WriteFileAction;
+use anyhook_actions::discord::DiscordAction;
+use anyhook_actions::slack::SlackAction;
+use anyhook_actions::github_dispatch::GithubDispatchAction;
+use anyhook_actions::git_sync::GitSyncAction;
 use anyhook_dashboard::{start_dashboard, DashboardState};
 use std::sync::RwLock;
 use std::path::Path;
@@ -139,6 +145,12 @@ hooks:
             engine.register_action("shell".to_string(), Arc::new(ShellAction::new()));
             engine.register_action("extract".to_string(), Arc::new(ExtractAction::new()));
             engine.register_action("http".to_string(), Arc::new(HttpAction::new()));
+            engine.register_action("delay".to_string(), Arc::new(DelayAction::new()));
+            engine.register_action("write_file".to_string(), Arc::new(WriteFileAction::new()));
+            engine.register_action("discord".to_string(), Arc::new(DiscordAction::new()));
+            engine.register_action("slack".to_string(), Arc::new(SlackAction::new()));
+            engine.register_action("github_dispatch".to_string(), Arc::new(GithubDispatchAction::new()));
+            engine.register_action("git_sync".to_string(), Arc::new(GitSyncAction::new()));
             
             // Load WASM plugins
             let plugins_dir = Path::new(&sys_cfg.plugins_dir);
