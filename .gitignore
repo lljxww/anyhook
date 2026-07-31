@@ -11,3 +11,4 @@ monitor_me_backup.zip
 out.json
 plugins/*.wasm
 dist/
+anyhook.conf

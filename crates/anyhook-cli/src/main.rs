@@ -127,6 +127,33 @@ hooks:
                 fs::write(path, template.trim())?;
                 info!("Generated template {}", path);
             }
+
+            let conf_template = r#"
+dashboard_port: 3000
+plugins_dir: plugins
+db_url: sqlite://.anyhook.db?mode=rwc
+log_level: info
+# dashboard_auth: "admin:secret"
+"#;
+            let conf_path = "anyhook.conf";
+            if fs::metadata(conf_path).is_ok() {
+                tracing::warn!("{} already exists, skip initialization.", conf_path);
+            } else {
+                fs::write(conf_path, conf_template.trim())?;
+                info!("Generated system config template {}", conf_path);
+            }
+
+            let plugins_dir = "plugins";
+            if !Path::new(plugins_dir).exists() {
+                fs::create_dir_all(plugins_dir)?;
+                info!("Created directory {}", plugins_dir);
+            }
+
+            // Initialize database
+            info!("Initializing database...");
+            let db_url = sys_cfg.db_url.clone();
+            let _db = anyhook_engine::db::Database::new(&db_url).await.map_err(|e| anyhow::anyhow!("Failed to init DB: {}", e))?;
+            info!("Database initialized successfully.");
         }
         Commands::Start { config, daemon } => {
             if *daemon {
@@ -135,8 +162,30 @@ hooks:
                     use daemonize::Daemonize;
                     use std::fs::File;
                     
-                    let stdout = File::create("/tmp/anyhook.out").unwrap();
-                    let stderr = File::create("/tmp/anyhook.err").unwrap();
+                    // Auto handle existing PID and stale files
+                    if let Ok(pid_str) = std::fs::read_to_string("/tmp/anyhook.pid") {
+                        if let Ok(pid) = pid_str.trim().parse::<i32>() {
+                            unsafe {
+                                if libc::kill(pid, 0) == 0 {
+                                    tracing::info!("Found existing daemon (PID: {}). Stopping it...", pid);
+                                    if libc::kill(pid, libc::SIGTERM) == 0 {
+                                        // Wait a moment for it to terminate
+                                        std::thread::sleep(std::time::Duration::from_secs(1));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Clean up old files (avoids permission issues if running as root)
+                    let _ = std::fs::remove_file("/tmp/anyhook.pid");
+                    let _ = std::fs::remove_file("/tmp/anyhook.out");
+                    let _ = std::fs::remove_file("/tmp/anyhook.err");
+                    
+                    let stdout = File::create("/tmp/anyhook.out")
+                        .map_err(|e| anyhow::anyhow!("Failed to create /tmp/anyhook.out (Permission denied? You may need to delete it if it's owned by another user): {}", e))?;
+                    let stderr = File::create("/tmp/anyhook.err")
+                        .map_err(|e| anyhow::anyhow!("Failed to create /tmp/anyhook.err (Permission denied? You may need to delete it if it's owned by another user): {}", e))?;
                     
                     let daemonize = Daemonize::new()
                         .pid_file("/tmp/anyhook.pid")
@@ -149,8 +198,8 @@ hooks:
                     match daemonize.start() {
                         Ok(_) => tracing::info!("Success, daemonized"),
                         Err(e) => {
-                            tracing::error!("Error, {}", e);
-                            return Err(anyhow::anyhow!("Daemonize failed: {}", e));
+                            tracing::error!("Error starting daemon: {}", e);
+                            return Err(anyhow::anyhow!("Daemonize failed: {}. (Is it already running?)", e));
                         }
                     }
                 }

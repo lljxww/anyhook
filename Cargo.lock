@@ -111,7 +111,7 @@ dependencies = [
 
 [[package]]
 name = "anyhook-actions"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "anyhook-core",
  "async-trait",
@@ -130,7 +130,7 @@ dependencies = [
 
 [[package]]
 name = "anyhook-cli"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "anyhook-actions",
  "anyhook-core",
@@ -156,7 +156,7 @@ dependencies = [
 
 [[package]]
 name = "anyhook-core"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -170,7 +170,7 @@ dependencies = [
 
 [[package]]
 name = "anyhook-dashboard"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "anyhook-core",
  "anyhow",
@@ -187,7 +187,7 @@ dependencies = [
 
 [[package]]
 name = "anyhook-engine"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "anyhook-core",
  "anyhow",
@@ -201,11 +201,11 @@ dependencies = [
 
 [[package]]
 name = "anyhook-plugin"
-version = "0.0.2"
+version = "0.0.3"
 
 [[package]]
 name = "anyhook-watchers"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "anyhook-core",
  "async-trait",
