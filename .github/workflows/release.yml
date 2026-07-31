@@ -127,6 +127,4 @@ jobs:
         env:
           CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
         run: |
-          # 替换为您在 Cloudsmith 上的实际组织/仓库名以及目标发行版 (例如 ubuntu/jammy)
-          # 如果想要通用，可以使用 any-distro/any-version
-          cloudsmith push deb ${{ github.repository_owner }}/anyhook/any-distro/any-version target/debian/*.deb
+          cloudsmith push deb liangjw/anyhook/any-distro/any-version target/debian/*.deb
