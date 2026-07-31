@@ -37,8 +37,8 @@ impl Action for WasmAction {
         // 因此必须使用 `spawn_blocking` 将其转移到专门的同步线程池中执行。
         let result = tokio::task::spawn_blocking(move || -> std::result::Result<Value, String> {
             let engine = Engine::default();
-            let mut linker = Linker::new(&engine);
-            wasmtime_wasi::add_to_linker(&mut linker, |s| s).map_err(|e| e.to_string())?;
+            let mut linker: Linker<wasmtime_wasi::p1::WasiP1Ctx> = Linker::new(&engine);
+            wasmtime_wasi::p1::add_to_linker_sync(&mut linker, |s| s).map_err(|e| e.to_string())?;
 
             let module = Module::from_file(&engine, &wasm_path).map_err(|e| e.to_string())?;
             
@@ -48,16 +48,15 @@ impl Action for WasmAction {
             let guest_out_file = format!("/tmp/{}", out_file_name);
             
             let mut builder = WasiCtxBuilder::new();
-            builder.env("ANYHOOK_CONTEXT", &serde_json::to_string(&ctx).unwrap()).unwrap();
-            builder.env("ANYHOOK_PLUGIN_CONFIG", &serde_json::to_string(&plugin_config).unwrap()).unwrap();
-            builder.env("ANYHOOK_OUTPUT_FILE", &guest_out_file).unwrap();
+            builder.env("ANYHOOK_CONTEXT", &serde_json::to_string(&ctx).unwrap());
+            builder.env("ANYHOOK_PLUGIN_CONFIG", &serde_json::to_string(&plugin_config).unwrap());
+            builder.env("ANYHOOK_OUTPUT_FILE", &guest_out_file);
             builder.inherit_stdout();
             builder.inherit_stderr();
             
-            let preopen_dir = cap_std::fs::Dir::open_ambient_dir(&temp_dir, cap_std::ambient_authority()).map_err(|e| e.to_string())?;
-            builder.preopened_dir(preopen_dir, "/tmp").map_err(|e| e.to_string())?;
+            builder.preopened_dir(&temp_dir, "/tmp", wasmtime_wasi::DirPerms::all(), wasmtime_wasi::FilePerms::all()).map_err(|e| e.to_string())?;
             
-            let wasi_ctx = builder.build();
+            let wasi_ctx = builder.build_p1();
             let mut store = Store::new(&engine, wasi_ctx);
             
             let instance = linker.instantiate(&mut store, &module).map_err(|e| e.to_string())?;

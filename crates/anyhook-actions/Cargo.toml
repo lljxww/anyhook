@@ -14,6 +14,6 @@ async-trait = { workspace = true }
 tracing = { workspace = true }
 reqwest = { workspace = true }
 wasmtime = "47.0.2"
-wasmtime-wasi = "24.0.9"
+wasmtime-wasi = "47.0.2"
 uuid = { workspace = true, features = ["v4"] }
 cap-std = "2.0.2"
