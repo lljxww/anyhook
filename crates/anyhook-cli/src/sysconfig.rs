@@ -1,3 +1,4 @@
+#![allow(clippy::collapsible_if)]
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
@@ -11,6 +12,7 @@ pub struct SystemConfig {
     pub db_url: String,
     #[serde(default = "default_log_level")]
     pub log_level: String,
+    pub dashboard_auth: Option<String>,
 }
 
 fn default_dashboard_port() -> u16 { 3000 }
@@ -25,6 +27,7 @@ impl Default for SystemConfig {
             plugins_dir: default_plugins_dir(),
             db_url: default_db_url(),
             log_level: default_log_level(),
+            dashboard_auth: None,
         }
     }
 }

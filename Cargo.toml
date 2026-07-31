@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "crates/*"
-, "hello_wasm"]
+, "examples/hello_wasm"]
 resolver = "2"
 
 [workspace.dependencies]

@@ -16,15 +16,8 @@ use crate::db::Database;
 /// 并通过 Router (路由器) 将事件正确地分发。
 pub struct Engine {
     _config: AnyhookConfig, // 全局配置
-    
-    // 知识点: Box<dyn Watcher> 使用了 trait object (特征对象)，
-    // 允许在 HashMap 中存储实现了 Watcher 特征的任意类型实例。这也是 Rust 实现“面向对象编程/多态”的一种方式。
     watchers: HashMap<String, Box<dyn Watcher>>,
-    
-    // 知识点: Arc<dyn Action> 同样是特征对象，但包了一层 Arc (原子引用计数)，
-    // 使得 Action 可以被安全、廉价地 clone 给多线程并发执行。
     actions: HashMap<String, Arc<dyn Action>>,
-    
     router: Arc<Router>, // 路由表
     reload_rx: Option<mpsc::Receiver<AnyhookConfig>>, // 用于接收热重载信号的通道
     pub db_url: String, // 数据库连接字符串

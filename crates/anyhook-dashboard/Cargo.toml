@@ -1,6 +1,6 @@
 [package]
 name = "anyhook-dashboard"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2024"
 
 [dependencies]
@@ -14,3 +14,4 @@ rust-embed = "8.0"
 mime_guess = "2.0"
 anyhook-core = { path = "../anyhook-core" }
 sqlx = { workspace = true }
+base64 = "0.23.0"

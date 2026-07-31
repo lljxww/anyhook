@@ -1,7 +1,7 @@
 class Anyhook < Formula
   desc "A cross-platform event-driven automation engine"
   homepage "https://github.com/lljxww/anyhook"
-  version "0.0.1"
+  version "0.0.2"
 
   on_macos do
     if Hardware::CPU.arm?

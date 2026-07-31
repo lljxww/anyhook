@@ -1,3 +1,9 @@
+plugins:
+  - name: "hello_wasm"
+    # path: "./plugins/hello_wasm.wasm" # 可选，如果不填则默认使用 plugins_dir 中的 {name}.wasm
+    config:
+      greeting: "Hello from Anyhook config!"
+
 watchers:
   - name: "test_cron"
     type: "timer"

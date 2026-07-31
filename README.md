@@ -30,6 +30,12 @@ cargo build --release
 在你的工作区创建一个 `anyhook.yaml` 配置文件：
 
 ```yaml
+plugins:
+  - name: "hello_wasm"
+    # path: "./plugins/hello_wasm.wasm" # 可选，如果不填则默认使用 plugins_dir 中的 {name}.wasm
+    config:
+      greeting: "Hello from Anyhook config!"
+
 watchers:
   - name: "my_fs_watcher"
     type: "filesystem"
@@ -79,9 +85,13 @@ anyhook start -c anyhook.yaml
 
 Anyhook 提供了一套完善的命令来管理你的自动化任务：
 
-- `anyhook start -c <config.yaml>`: 启动自动化引擎守护进程以及 Web 控制台。
-- `anyhook list -c <config.yaml>`: 预览所有配置好的 Watchers, Actions 和路由 Hooks。
-- `anyhook status`: 获取当前引擎的运行状态（通过访问内置 Dashboard API）。
+- `anyhook start -c <config.yaml>`: 在**前台**启动自动化引擎与 Web 控制台（适合 Systemd/Docker 等环境）。
+- `anyhook start -d -c <config.yaml>`: 在**后台**以守护进程模式启动引擎（原生支持，仅限 Unix 系统）。
+- `anyhook stop`: 发送信号优雅停止后台守护进程。
+- `anyhook watchers list`: 拉取当前正在运行的监听器列表。
+- `anyhook hooks list`: 打印引擎中正在生效的事件路由映射表。
+- `anyhook actions list`: 打印系统目前支持的所有动作（包含原生动作和成功加载的 WASM 插件）。
+- `anyhook status`: 获取当前引擎最近执行的任务日志和状态（支持终端颜色高亮）。
 - `anyhook trigger <watcher_name>`: 手动强制触发某个特定的 Watcher，立即执行绑定的 Actions。
 
 ## 🔌 Web Dashboard
@@ -97,15 +107,18 @@ Anyhook 原生支持动态加载 WebAssembly 插件，作为自定义事件处�
 
 ### 1. 插件生命周期与加载
 1. **编译目标**: 请确保你的代码编译目标为 `wasm32-wasi` (或 `wasm32-wasip1`)。
-2. **存放规范**: 将编译好的 `.wasm` 文件放入 `anyhook.conf` 配置的 `plugins_dir` 中（默认是当前目录下的 `plugins/`）。
-3. **命名规范**: Anyhook 会截取文件名作为 Action 的 `type`。例如，文件名为 `discord_notifier.wasm`，在 `anyhook.yaml` 中调用时，应当设置 `type: "discord_notifier"`。
+2. **配置插件**: 在 `anyhook.yaml` 的 `plugins` 块中声明插件。Anyhook 会将其作为全新的 Action 加载。
+3. **存放规范**: 如果未在配置中指定 `path`，需将编译好的 `.wasm` 文件放入 `anyhook.conf` 配置的 `plugins_dir` 中（默认是当前目录下的 `plugins/`）。也可以不声明配置，让 Anyhook 自动发现 `plugins_dir` 下的 `.wasm` 文件。
+4. **文档规范**: 所有开发的插件 **必须** 包含一份完整的 Markdown 自述文件（如 `hello_wasm.md`），该文件需要与对应的 `.wasm` 文件同名并放置在同一目录下。文档内容必须包含：插件功能说明、`anyhook.yaml` 配置文件中的 `config` 参数说明与示例。引擎将在启动时解析此文件，并在 Web Dashboard 的 "Plugins" 面板中提供给用户可视化查询。
+5. **命名规范**: Anyhook 会截取文件名或从配置中的 `name` 字段作为 Action 的 `type`。例如，`name: "discord_notifier"`，在 Actions 中调用时应当设置 `type: "discord_notifier"`。
 
 ### 2. 数据交互协议 (WASI)
 为了跨语言通讯的极致简便，Anyhook 摒弃了复杂的线性内存操作，转而使用**环境变量**和**文件 I/O** 来完成通信：
 
 #### 输入层 (Input)
-- 环境变量 `ANYHOOK_CONTEXT` 会传入一个合法的 JSON 字符串。
-- 该 JSON 包含了触发本次 Action 的详细上下文，其 Schema 如下：
+- 环境变量 `ANYHOOK_CONTEXT` 会传入一个合法的 JSON 字符串，包含本次触发的事件及动作配置。
+- 环境变量 `ANYHOOK_PLUGIN_CONFIG` 会传入一个 JSON 字符串，包含插件在 `plugins` 块中的全局配置。
+- `ANYHOOK_CONTEXT` 的 Schema 如下：
   ```json
   {
     "event": {
@@ -237,10 +250,22 @@ class Program
 
 ## 🛡️ 后台守护进程部署 (Daemonization)
 
-作为一款跨平台的现代应用程序，Anyhook 推荐将后台守护运行的职责交由操作系统的系统级进程管理器（Supervisor）来处理。这不仅更加稳健，还能获得开机自启、崩溃自动重启等特性。
+Anyhook 支持多种方式进行后台守护部署。需要注意的是，如果你赋予可执行文件 `+x` 权限并直接运行 `anyhook start`，它会默认在**前台（Foreground）**运行，一旦你关闭终端或者按下 `Ctrl+C` 进程就会结束。
 
-### Linux (Systemd)
-在 `/etc/systemd/system/anyhook.service` 创建配置：
+如果你希望在无界面服务器（Headless Server）上保持 Anyhook 后台常驻，你可以选择以下方式：
+
+### 1. 原生守护进程模式 (推荐轻量级部署)
+在 Linux / macOS 系统上，你可以直接追加 `-d` (或 `--daemon`) 标志启动，引擎会自动脱离当前终端并在后台驻留：
+```bash
+anyhook start -d -c anyhook.yaml
+```
+- **进程追踪**: 引擎会在 `/tmp/anyhook.pid` 记录进程号。
+- **日志输出**: 所有标准输出和错误会被重定向到 `/tmp/anyhook.out` 和 `/tmp/anyhook.err`。
+- **停止服务**: 想要关闭后台引擎时，只需执行 `anyhook stop` 即可优雅退出。
+
+### 2. Linux (Systemd) 生产环境推荐
+作为一款生产级的现代应用程序，长期运行我们更推荐将任务交由系统的守护进程管理器处理。创建 `/etc/systemd/system/anyhook.service`：
+
 ```ini
 [Unit]
 Description=Anyhook Automation Engine

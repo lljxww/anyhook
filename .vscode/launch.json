@@ -67,10 +67,10 @@
                 }
             },
             "args": [],
-            "cwd": "${workspaceFolder}/hello_wasm",
+            "cwd": "${workspaceFolder}/examples/hello_wasm",
             "env": {
                 "ANYHOOK_CONTEXT": "{\"event\": {\"source\": \"test_debugger\"}}",
-                "ANYHOOK_OUTPUT_FILE": "${workspaceFolder}/hello_wasm/out.json"
+                "ANYHOOK_OUTPUT_FILE": "${workspaceFolder}/examples/hello_wasm/out.json"
             },
             "sourceLanguages": ["rust"]
         }

@@ -13,11 +13,12 @@ use wasmtime_wasi::WasiCtxBuilder;
 #[derive(Debug)]
 pub struct WasmAction {
     pub wasm_path: PathBuf,
+    pub plugin_config: Value,
 }
 
 impl WasmAction {
-    pub fn new(wasm_path: PathBuf) -> Self {
-        Self { wasm_path }
+    pub fn new(wasm_path: PathBuf, plugin_config: Value) -> Self {
+        Self { wasm_path, plugin_config }
     }
 }
 
@@ -29,6 +30,7 @@ impl Action for WasmAction {
 
     async fn execute(&self, ctx: ActionContext) -> Result<Value> {
         let wasm_path = self.wasm_path.clone();
+        let plugin_config = self.plugin_config.clone();
         
         // 知识点: wasmtime 的模块编译和实例化属于 CPU 密集型甚至可能是阻塞型操作。
         // 在 tokio (异步运行时) 中，直接运行长耗时的同步代码会"阻塞(Block)"工作线程。
@@ -47,6 +49,7 @@ impl Action for WasmAction {
             
             let mut builder = WasiCtxBuilder::new();
             builder.env("ANYHOOK_CONTEXT", &serde_json::to_string(&ctx).unwrap()).unwrap();
+            builder.env("ANYHOOK_PLUGIN_CONFIG", &serde_json::to_string(&plugin_config).unwrap()).unwrap();
             builder.env("ANYHOOK_OUTPUT_FILE", &guest_out_file).unwrap();
             builder.inherit_stdout();
             builder.inherit_stderr();

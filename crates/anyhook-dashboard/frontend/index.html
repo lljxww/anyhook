@@ -20,50 +20,77 @@
                 <h1>Anyhook</h1>
             </div>
             <nav class="nav-links">
-                <a href="#" class="active" id="nav-dashboard">Dashboard</a>
-                <a href="#" id="nav-logs">Action Logs</a>
+                <a href="#" class="active" id="nav-dashboard" data-i18n="navDashboard">Dashboard</a>
+                <a href="#" id="nav-plugins" data-i18n="navPlugins">Plugins</a>
+                <a href="#" id="nav-logs" data-i18n="navLogs">Action Logs</a>
             </nav>
-            <div class="status-indicator">
-                <span class="pulse"></span>
-                <span class="status-text">Engine Online</span>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="lang-selector" style="background: rgba(255, 255, 255, 0.1); color: inherit; border: 1px solid rgba(255, 255, 255, 0.2); padding: 4px 8px; border-radius: 4px; outline: none; cursor: pointer;">
+                    <option value="en">English</option>
+                    <option value="zh">简体中文</option>
+                </select>
+                <div class="status-indicator">
+                    <span class="pulse"></span>
+                    <span class="status-text" data-i18n="engineOnline">Engine Online</span>
+                </div>
             </div>
         </header>
 
         <main class="content-area">
+            <!-- Config Error Banner -->
+            <div id="config-error-banner" style="display: none; background: rgba(255, 60, 60, 0.2); border: 1px solid var(--danger); color: #ffcccc; padding: 1rem; margin: 0 1.5rem 1.5rem 1.5rem; border-radius: 8px;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <span style="font-size: 1.2rem;">⚠️</span>
+                    <strong data-i18n="configErrorTitle">Configuration Error</strong>
+                </div>
+                <pre id="config-error-message" style="margin: 0; white-space: pre-wrap; font-family: monospace; font-size: 0.9rem;"></pre>
+            </div>
+
             <!-- Dashboard View -->
             <section id="view-dashboard" class="view active">
                 <div class="metrics-grid">
                     <div class="glass-panel metric-card">
-                        <h3>Active Watchers</h3>
+                        <h3 data-i18n="activeWatchers">Active Watchers</h3>
                         <p class="metric-value" id="count-watchers">0</p>
                     </div>
                     <div class="glass-panel metric-card">
-                        <h3>Registered Actions</h3>
+                        <h3 data-i18n="registeredActions">Registered Actions</h3>
                         <p class="metric-value" id="count-actions">0</p>
                     </div>
                     <div class="glass-panel metric-card">
-                        <h3>Configured Hooks</h3>
+                        <h3 data-i18n="configuredHooks">Configured Hooks</h3>
                         <p class="metric-value" id="count-hooks">0</p>
                     </div>
                 </div>
 
-                <div class="split-view">
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <div class="glass-panel list-container">
                         <div class="panel-header">
-                            <h2>Watchers</h2>
+                            <h2 data-i18n="watchers">Watchers</h2>
                             <button class="icon-btn" onclick="fetchStatus()">↺</button>
                         </div>
                         <ul class="item-list" id="watchers-list">
-                            <li class="loading-state">Loading watchers...</li>
+                            <li class="loading-state" data-i18n="loadingWatchers">Loading watchers...</li>
                         </ul>
                     </div>
-                    <div class="glass-panel list-container">
-                        <div class="panel-header">
-                            <h2>Hooks & Actions</h2>
+
+                    <div class="split-view">
+                        <div class="glass-panel list-container">
+                            <div class="panel-header">
+                                <h2 data-i18n="registeredActions">Registered Actions</h2>
+                            </div>
+                            <ul class="item-list" id="registered-actions-list">
+                                <li class="loading-state">Loading...</li>
+                            </ul>
                         </div>
-                        <ul class="item-list" id="hooks-list">
-                            <li class="loading-state">Loading hooks...</li>
-                        </ul>
+                        <div class="glass-panel list-container">
+                            <div class="panel-header">
+                                <h2 data-i18n="configuredHooks">Configured Hooks</h2>
+                            </div>
+                            <ul class="item-list" id="configured-hooks-list">
+                                <li class="loading-state">Loading...</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -72,32 +99,56 @@
             <section id="view-logs" class="view">
                 <div class="glass-panel list-container full-height">
                     <div class="panel-header">
-                        <h2>Action Execution Logs</h2>
+                        <h2 data-i18n="actionExecutionLogs">Action Execution Logs</h2>
                         <div class="header-actions">
-                            <button class="danger-btn" onclick="clearLogs()" style="margin-right: 10px;">Clear Logs</button>
-                            <button class="primary-btn" onclick="fetchLogs()">Refresh</button>
+                            <button class="danger-btn" onclick="clearLogs()" style="margin-right: 10px;" data-i18n="clearLogs">Clear Logs</button>
+                            <button class="primary-btn" onclick="fetchLogs()" data-i18n="refresh">Refresh</button>
                         </div>
                     </div>
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Time</th>
-                                    <th>Action</th>
-                                    <th>Status</th>
+                                    <th data-i18n="id">ID</th>
+                                    <th data-i18n="time">Time</th>
+                                    <th data-i18n="action">Action</th>
+                                    <th data-i18n="status">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="logs-tbody">
-                                <tr><td colspan="4" class="loading-state">Loading logs...</td></tr>
+                                <tr><td colspan="4" class="loading-state" data-i18n="loadingLogs">Loading logs...</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </section>
+            <!-- Plugins View -->
+            <section id="view-plugins" class="view">
+                <div class="split-view">
+                    <div class="glass-panel list-container" style="flex: 1;">
+                        <div class="panel-header">
+                            <h2 data-i18n="installedPlugins">Installed Plugins</h2>
+                            <button class="icon-btn" onclick="fetchPlugins()">↺</button>
+                        </div>
+                        <ul class="item-list" id="plugins-list">
+                            <li class="loading-state" data-i18n="loadingPlugins">Loading plugins...</li>
+                        </ul>
+                    </div>
+                    <div class="glass-panel list-container" style="flex: 2; overflow-y: auto;">
+                        <div class="panel-header">
+                            <h2 id="plugin-doc-title" data-i18n="pluginDocTitle">Plugin Documentation</h2>
+                        </div>
+                        <div id="plugin-doc-content" style="padding: 1rem; color: #ccc;" data-i18n="selectPluginPrompt">
+                            Select a plugin from the list to view its documentation.
+                        </div>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
+    <!-- Include marked.js for markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="/app.js"></script>
 </body>
 </html>

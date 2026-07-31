@@ -4,3 +4,10 @@
 agent.md
 monitor_me/
 monitor_me_backup.zip
+
+# Testing Artifacts
+.anyhook.db
+.anyhook.db-*
+out.json
+plugins/*.wasm
+dist/

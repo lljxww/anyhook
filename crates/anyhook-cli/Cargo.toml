@@ -1,6 +1,6 @@
 [package]
 name = "anyhook-cli"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2024"
 
 [[bin]]
@@ -26,6 +26,11 @@ serde = { workspace = true }
 anyhow = { workspace = true }
 notify = { workspace = true }
 dirs = "6.0.0"
+comfy-table = "7.2.2"
+
+[target."cfg(unix)".dependencies]
+daemonize = "0.5.0"
+libc = "0.2.189"
 
 [package.metadata.deb]
 maintainer = "Anyhook Contributors"

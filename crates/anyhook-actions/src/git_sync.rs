@@ -4,7 +4,6 @@ use async_trait::async_trait;
 use serde::Deserialize;
 use serde_json::json;
 use std::process::Command;
-use std::path::Path;
 
 /// 知识点: GitSyncAction 专为自动部署设计。
 /// 它会判断目标目录是否为有效的 Git 仓库，如果不存在就 clone，如果存在就 pull。

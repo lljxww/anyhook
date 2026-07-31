@@ -1,3 +1,4 @@
+#![allow(clippy::new_without_default, clippy::manual_range_contains, clippy::redundant_closure)]
 pub mod archive;
 pub mod shell;
 pub mod extract;
