@@ -89,7 +89,7 @@ jobs:
           7z a -tzip ${{ matrix.asset_name }} anyhook/
 
       - name: Upload Release Asset
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: dist/${{ matrix.asset_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -110,7 +110,7 @@ jobs:
         run: cargo deb -p anyhook-cli
 
       - name: Upload .deb Release Asset
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: target/debian/*.deb
           token: ${{ secrets.GITHUB_TOKEN }}
