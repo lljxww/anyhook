@@ -11,6 +11,6 @@ tracing = { workspace = true }
 serde_json = { workspace = true }
 serde = { workspace = true }
 async-trait = { workspace = true }
-cron = "0.12"
+cron = "0.17"
 chrono = { workspace = true }
 axum = { workspace = true }
