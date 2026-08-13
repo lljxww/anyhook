@@ -26,7 +26,7 @@ serde = { workspace = true }
 anyhow = { workspace = true }
 notify = { workspace = true }
 dirs = "6.0.0"
-comfy-table = "7.2.2"
+comfy-table = "8.0.0"
 
 [target."cfg(unix)".dependencies]
 daemonize = "0.5.0"
